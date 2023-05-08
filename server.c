@@ -137,7 +137,7 @@ void tcp(struct pollfd *pfds, int *nfds, list_t *clients, sockets_t *socks,
 		list_add_head(clients, new);
 
 		// Prints a message indicating a new client has connected
-		printf("New client %s connected from %s:%d\n", new->id,
+		printf("New client %s connected from %s:%d.\n", new->id,
 			inet_ntoa(new_tcp.sin_addr), ntohs(new_tcp.sin_port));
 
 		free(new);
