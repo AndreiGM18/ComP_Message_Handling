@@ -137,7 +137,7 @@ void tcp(struct pollfd *pfds, int *nfds, list_t *clients, sockets_t *socks,
 		list_add_head(clients, new);
 
 		// Prints a message indicating a new client has connected
-		printf("New client %s connected from %s:%d.\n", new->id,
+		printf("New client %s connected from %s:%hu.\n", new->id,
 			inet_ntoa(new_tcp.sin_addr), ntohs(new_tcp.sin_port));
 
 		free(new);
@@ -151,7 +151,7 @@ void tcp(struct pollfd *pfds, int *nfds, list_t *clients, sockets_t *socks,
 		found->online = true;
 
 		// Prints a message indicating the client has reconnected
-		printf("New client %s connected from %s:%d.\n", found->id,
+		printf("New client %s connected from %s:%hu.\n", found->id,
 			inet_ntoa(new_tcp.sin_addr), ntohs(new_tcp.sin_port));
 
 		// Sends unsent messages, clearing the unsent messages list
@@ -180,9 +180,11 @@ void udp(list_t *clients, sockets_t *socks, char *buffer) {
 	// Clears the buffer
 	memset(buffer, 0, BUFSIZ);
 
+	struct sockaddr_in new_udp;
+
 	// Receives a UDP message from the socket and store it in the buffer
 	int ret = recvfrom(socks->udp_sock, buffer, sizeof(udp_msg_t), 0,
-						(struct sockaddr *)&socks->udp_addr, &socks->len);
+						(struct sockaddr *)&new_udp, &socks->len);
 	DIE(ret < 0, "udp recvfrom() failed");
 
 	// Declares variables to store the received UDP message and the
@@ -191,6 +193,10 @@ void udp(list_t *clients, sockets_t *socks, char *buffer) {
 	memset(&tcp_send, 0, sizeof(tcp_msg_t));
 	udp_msg_t *udp_recv;
 	udp_recv = (udp_msg_t *)buffer;
+
+	// Copies the UDP client's IP and port (in network order)
+	strcpy(tcp_send.ip, inet_ntoa(new_udp.sin_addr));
+	tcp_send.port = new_udp.sin_port;
 
 	// Extracts the topic and ensures that it is null-terminated
 	strcpy(tcp_send.topic, udp_recv->topic);

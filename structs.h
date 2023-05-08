@@ -38,8 +38,6 @@ typedef struct sub_packet_t {
 	uint8_t type;
 	char topic[TOPICSIZ];
 	uint8_t sf;
-	char ip[IPV4_LEN];
-	uint16_t port;
 } sub_packet_t;
 
 // The TCP message structure

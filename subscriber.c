@@ -116,7 +116,7 @@ bool server_cmd(int tcp_sock, char *buffer) {
 
 	// Casts buffer to a tcp_msg_t struct and prints its content
 	tcp_msg_t *msg_recv = (tcp_msg_t *)buffer;
-	printf("%s:%u - %s - %s - %s\n", msg_recv->ip, msg_recv->port,
+	printf("%s:%hu - %s - %s - %s\n", msg_recv->ip, ntohs(msg_recv->port),
 		msg_recv->topic, msg_recv->type, msg_recv->content);
 
 	// Returns in order to continue the main loop
